@@ -1,61 +1,89 @@
-import React from "react";
+"use client";
+import React, { useState,useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const Page = () => {
+const SignIn = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch("/api")
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((err) => console.error("Error:", err));
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    // Perform authentication logic here...
+    console.log("Signing in with:", { email, password });
+
+    // Redirect user to homepage after successful login
+    router.push("/");
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
-          Welcome to <span className="text-blue-600">Fox Chess.com</span>
+<div className="flex justify-center items-center h-[700px] bg-gray-100">
+      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
+          Sign In to Fox Chess
         </h2>
 
-        <form className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
+            <label className="block text-gray-700">Email</label>
             <input
-              type="text"
+              type="email"
+              className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-blue-400"
               placeholder="Enter your email"
-              className="w-full p-2 mt-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
           {/* Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <label className="block text-gray-700">Password</label>
             <input
               type="password"
+              className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-blue-400"
               placeholder="Enter your password"
-              className="w-full p-2 mt-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Re-enter Password
-            </label>
-            <input
-              type="password"
-              placeholder="Confirm your password"
-              className="w-full p-2 mt-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
-            Sign Up
+            Sign In
           </button>
         </form>
+
+        {/* Sign Up Link */}
+        <p className="mt-4 text-center text-gray-600">
+          Don't have an account?{" "}
+          <Link href="/signup" className="text-blue-600 hover:underline">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default SignIn;
